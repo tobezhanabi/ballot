@@ -34,16 +34,23 @@ describe("Ballot", async () => {
         );
       }
     });
+
     it("has zero votes for all proposals", async () => {
       for (let index = 0; index < PROPOSALS.length; index++) {
         const proposal = await ballotContract.proposals(index);
-        expect(proposal.voteCount).to.equal("0");
+        expect(proposal.voteCount).to.equal(0n);
       }
     });
     it("should set deployer address as chairperson", async () => {
       const accounts = await ethers.getSigners();
       const chairperson = await ballotContract.chairperson();
       expect(chairperson).to.eq(accounts[0].address); // because we are using hardhat, the first address is the deployer.
+    });
+
+    it("sets the voting weight for the chairperson as 1", async () => {
+      const accounts = await ethers.getSigners();
+      const chairpersonVoter = await ballotContract.voters(accounts[0].address);
+      expect(chairpersonVoter.weight).to.equal(1);
     });
   });
 });
